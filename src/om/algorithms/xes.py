@@ -20,12 +20,11 @@ This module contains algorithms that perform data processing operations for X-ra
 Emission Spectroscopy.
 """
 
-
-from typing import Any, Dict, Union, cast
+from typing import Any, Dict, Optional, Union, cast
 
 import numpy
 from numpy.typing import NDArray
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel, Field, ValidationError
 from scipy import ndimage  # type: ignore
 from scipy.ndimage import gaussian_filter1d  # type: ignore
 
@@ -33,7 +32,7 @@ from om.lib.exceptions import OmConfigurationFileSyntaxError
 
 
 class _EnergySpectrumRetrievalParameters(BaseModel):
-    intensity_threshold: float
+    intensity_threshold: Optional[float] = Field(default=None)
     rotation_in_degrees: float
     min_row_in_pix_for_integration: int
     max_row_in_pix_for_integration: int
@@ -87,9 +86,9 @@ class EnergySpectrumRetrieval:
         """
 
         try:
-            self._energy_spectrum_retrieval_parameters: (
-                _EnergySpectrumRetrievalParameters
-            ) = _EnergySpectrumRetrievalParameters.model_validate(parameters)
+            self._energy_spectrum_retrieval_parameters: _EnergySpectrumRetrievalParameters = _EnergySpectrumRetrievalParameters.model_validate(
+                parameters
+            )
         except ValidationError as exception:
             raise OmConfigurationFileSyntaxError(
                 "Error parsing parameters for the EnergySpectrumRetrieval algorithm: "
@@ -137,7 +136,7 @@ class EnergySpectrumRetrieval:
         # Apply a threshold
 
         # TODO: Perhaps better type hints can be found for this
-        if self._energy_spectrum_retrieval_parameters.intensity_threshold:
+        if self._energy_spectrum_retrieval_parameters.intensity_threshold is not None:
             data[
                 data < self._energy_spectrum_retrieval_parameters.intensity_threshold
             ] = 0
