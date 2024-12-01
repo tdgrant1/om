@@ -19,7 +19,6 @@
 This module contains classes that deals with the retrieval of single standalone events.
 """
 
-
 from pathlib import Path
 from typing import Any, Dict, Generator, List, TextIO, Type
 
@@ -48,7 +47,7 @@ class OmEventDataRetrieval:
     See documentation for the `__init__` function.
     """
 
-    def __init__(self, *, parameters: Dict[str, Any], source: str) -> None:
+    def __init__(self, *, parameters: Dict[str, Dict[str, Any]], source: str) -> None:
         """
         Retrieval of single standalone data events.
 
